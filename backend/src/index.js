@@ -26,7 +26,9 @@ const limiter = rateLimit({
 
 app.use(helmet());
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",")
+    : ["http://localhost:5173", "http://localhost:3000"],
   credentials: true,
 }));
 app.use(express.json());
@@ -38,6 +40,15 @@ app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/v1/auth", require("./routes/authRoutes"));
 app.use("/api/v1/products", require("./routes/productRoutes"));
+
+app.get("/api/v1/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
 
 app.use("/api/v1", (req, res) => {
   res.json({ success: true, message: "API is running. Visit /api/v1/docs for documentation." });
