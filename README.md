@@ -1,87 +1,89 @@
-# REST API with Authentication & Role-Based Access Control
+# ProductAPI - Scalable REST API with Production Frontend
 
-A scalable full-stack project demonstrating secure backend API development with JWT authentication, role-based access control, and a modern React frontend.
+A full-stack MERN application with secure REST API, role-based authentication, Redis caching, and a production-grade React UI featuring a responsive dashboard, product catalog, admin panel, and polished user experience.
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
 | Aspect | Details |
 |--------|---------|
-| **Project Type** | Full-stack REST API with Frontend |
-| **Backend** | Node.js + Express.js |
-| **Database** | MongoDB (Mongoose ODM) |
-| **Authentication** | JWT (JSON Web Tokens) with bcrypt password hashing |
-| **Frontend** | React 18 + Vite + Tailwind CSS |
-| **Documentation** | Swagger UI |
+| **Stack** | MongoDB, Express, React, Node.js |
+| **Frontend** | React 18 + Vite + Tailwind CSS + Framer Motion |
+| **Backend** | Express.js with JWT auth, bcrypt, role-based access |
+| **Caching** | Redis (Upstash) with BullMQ for background jobs |
+| **Testing** | Jest + Supertest + MongoMemoryServer (26 passing tests) |
+| **Documentation** | Swagger UI at `/api/v1/docs` |
 
 ---
 
-## ✨ Features Implemented
+## Features
 
-### Backend Features
-- ✅ User registration & login with secure password hashing (bcrypt)
-- ✅ JWT-based authentication with token expiration
-- ✅ Role-based access control (user vs admin)
-- ✅ CRUD operations for products entity
-- ✅ API versioning (/api/v1)
-- ✅ Input validation & sanitization (express-validator)
-- ✅ Error handling middleware
-- ✅ Redis caching for products
-- ✅ Rate limiting & security headers (helmet, cors)
-- ✅ Pagination, search, and filtering
-- ✅ Swagger API documentation at `/api/v1/docs`
+### Backend
+- JWT authentication with bcrypt password hashing
+- Role-based access control (user / admin)
+- CRUD operations for products with validation
+- Redis caching for frequently accessed data
+- BullMQ queue for async background processing
+- Rate limiting, CORS, Helmet security headers
+- Pagination, search, and sorting
+- Swagger API documentation
 
-### Frontend Features
-- ✅ User registration & login UI
-- ✅ Protected dashboard (requires JWT)
-- ✅ Product listing with pagination
-- ✅ Create, edit, delete products
-- ✅ Responsive design with Tailwind CSS
-- ✅ Error/success notifications
-- ✅ Token management via interceptors
+### Frontend
+- **Landing Page** - Hero section with animated feature cards and terminal mockup
+- **Authentication** - Split-layout login/register with form validation
+- **Dashboard** - Welcome banner, live stats, product grid/table with CRUD, modals, pagination
+- **Products Catalog** - Search, filter by category, sort, grid/list toggle, "Coming Soon" section
+- **Admin Panel** - User management, role editing, system status, activity logs
+- **Profile** - Editable name, password change, account stats, security status
+- **Layout** - Collapsible sidebar with profile icon, sticky header, responsive footer
+- **UX** - Framer Motion animations, toast notifications, skeleton loaders, glass morphism
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 inter-project/
 ├── backend/
 │   ├── src/
-│   │   ├── config/          # Database, Redis, Swagger config
-│   │   ├── controllers/    # Route handlers (auth, products)
+│   │   ├── config/          # DB, Redis, queue config
+│   │   ├── controllers/     # Route handlers
 │   │   ├── middleware/      # Auth, validation, error handling
-│   │   ├── models/          # Mongoose schemas (User, Product)
+│   │   ├── models/          # Mongoose schemas
 │   │   ├── routes/          # API routes
-│   │   └── index.js         # Express app entry point
+│   │   ├── queue/           # BullMQ workers
+│   │   └── index.js         # Express entry point
 │   ├── package.json
-│   └── .env                 # Environment variables
+│   └── .env.example
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── api.js           # Axios API client with interceptors
-│   │   ├── AuthContext.jsx  # React context for auth state
-│   │   ├── Login.jsx        # Login page
-│   │   ├── Register.jsx     # Registration page
-│   │   ├── Dashboard.jsx    # Product management UI
-│   │   ├── ProtectedRoute.jsx
-│   │   └── App.jsx          # Main app with routing
-│   ├── index.html
-│   ├── vite.config.js
+│   │   ├── components/      # Layout with sidebar/header/footer
+│   │   ├── pages/           # Products, Admin pages
+│   │   ├── App.jsx          # Router with protected routes
+│   │   ├── Dashboard.jsx    # Stats, product CRUD, modals
+│   │   ├── Profile.jsx      # User profile & settings
+│   │   ├── Landing.jsx      # Animated landing page
+│   │   ├── Login.jsx        # Auth pages
+│   │   ├── AuthContext.jsx  # Auth state management
+│   │   ├── ToastContext.jsx # Notification system
+│   │   └── api.js           # Axios client with interceptors
+│   ├── index.html           # Google Fonts
+│   ├── index.css            # Tailwind + custom animations
 │   └── package.json
 │
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
-- MongoDB (local or MongoDB Atlas)
+
+- Node.js 18+
+- MongoDB (local or Atlas)
 - Redis (optional - Upstash for cloud)
 
 ### Backend Setup
@@ -89,10 +91,12 @@ inter-project/
 ```bash
 cd backend
 npm install
+cp .env.example .env
+# Edit .env with your MongoDB URI and JWT secret
 npm run dev
 ```
 
-Backend runs on: **http://localhost:5000**
+Backend runs on **http://localhost:5000**
 
 ### Frontend Setup
 
@@ -102,72 +106,50 @@ npm install
 npm run dev
 ```
 
-Frontend runs on: **http://localhost:5173**
+Frontend runs on **http://localhost:5173**
+
+### Production Build
+
+```bash
+# Frontend
+cd frontend
+npm run build
+# Output: frontend/dist/
+
+# Backend
+cd backend
+NODE_ENV=production npm start
+```
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-### Authentication Endpoints
+### Authentication
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/auth/register` | Register new user | ❌ |
-| POST | `/api/v1/auth/login` | Login user | ❌ |
-| GET | `/api/v1/auth/me` | Get current user profile | ✅ |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/v1/auth/register` | Register new user | No |
+| POST | `/api/v1/auth/login` | Login user | No |
+| GET | `/api/v1/auth/me` | Get current user | Yes |
 
-### Product Endpoints
+### Products
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/v1/products` | List products (paginated) | ✅ |
-| POST | `/api/v1/products` | Create product | ✅ |
-| GET | `/api/v1/products/:id` | Get single product | ✅ |
-| PATCH | `/api/v1/products/:id` | Update product | ✅ |
-| DELETE | `/api/v1/products/:id` | Delete product (admin only) | ✅ |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/v1/products` | List products (paginated) | Yes |
+| POST | `/api/v1/products` | Create product | Yes |
+| GET | `/api/v1/products/:id` | Get single product | Yes |
+| PATCH | `/api/v1/products/:id` | Update product | Yes |
+| DELETE | `/api/v1/products/:id` | Delete product (admin) | Yes |
 
-### API Documentation
-Visit: **http://localhost:5000/api/v1/docs** (Swagger UI)
+### Swagger Docs
 
----
-
-## 🔐 Security Implementation
-
-1. **Password Hashing**: bcrypt with 12 salt rounds
-2. **JWT Tokens**: Signed with secret key, expires in 7 days
-3. **Token Storage**: Stored in localStorage on frontend
-4. **Protected Routes**: Middleware validates JWT on every request
-5. **Role-Based Access**: Admin can delete any product, users can only manage their own
-6. **Input Validation**: express-validator sanitizes all inputs
-7. **Security Headers**: Helmet.js provides security headers
-8. **Rate Limiting**: 100 requests per 15 minutes
-9. **CORS**: Enabled for frontend origin
+Visit **http://localhost:5000/api/v1/docs** for interactive API documentation.
 
 ---
 
-## 🧪 API Design Best Practices
-
-- ✅ RESTful principles with proper HTTP status codes
-- ✅ Consistent response format (`{ success, message, data }`)
-- ✅ Proper error handling with meaningful messages
-- ✅ Pagination support for list endpoints
-- ✅ API versioning for future flexibility
-- ✅ Swagger documentation for API consumers
-
----
-
-## 💻 Frontend Highlights
-
-- **State Management**: React Context API for auth state
-- **API Client**: Axios with request/response interceptors
-- **Token Handling**: Auto-attaches JWT to protected requests
-- **Error Handling**: Auto-redirects to login on 401
-- **Responsive UI**: Tailwind CSS for modern design
-- **User Experience**: Loading states, success/error messages
-
----
-
-## 🔧 Environment Variables
+## Environment Variables
 
 ```env
 PORT=5000
@@ -178,56 +160,65 @@ REDIS_URL=your_redis_url
 NODE_ENV=development
 ```
 
-> **Note**: `.env` is in `.gitignore` - never commit credentials!
+> **Note:** `.env` is gitignored. Never commit credentials. Use `.env.example` as a template.
 
 ---
 
-## 👤 User Roles
+## Security
+
+1. Password hashing with bcrypt (12 salt rounds)
+2. JWT tokens with 7-day expiration
+3. Role-based middleware for admin routes
+4. Input validation via express-validator
+5. Helmet security headers
+6. Rate limiting (100 req / 15 min)
+7. CORS configured for frontend origin
+8. Auto-logout on 401 via Axios interceptor
+
+---
+
+## User Roles
 
 | Role | Permissions |
 |------|-------------|
-| **user** | Create, read, update own products |
-| **admin** | Full access - can delete any product |
+| **user** | View, create, update own products |
+| **admin** | Full access including delete, user management |
 
 ---
 
-## 📝 Scalability Notes
+## Frontend Pages
 
-### Current Architecture
-- Monolithic Express server with modular route/controller structure
-- MongoDB with Mongoose for flexible schema
-- Redis integration for caching
-
-### Future Improvements for Scale
-1. **Microservices**: Break into auth-service, product-service
-2. **Load Balancing**: Use Nginx/HAProxy
-3. **Caching**: Redis for frequently accessed data
-4. **Database**: Sharding for large datasets
-5. **CI/CD**: Docker containers with automated deployment
-6. **Monitoring**: logging with Winston, alerts with Prometheus
+| Route | Description | Access |
+|-------|-------------|--------|
+| `/` | Landing page with hero and features | Public |
+| `/login` | Split-layout login form | Public |
+| `/register` | Registration form | Public |
+| `/dashboard` | Stats, product CRUD, grid/table view | Authenticated |
+| `/products` | Product catalog with search, filters, coming soon | Authenticated |
+| `/profile` | User info, password change, account stats | Authenticated |
+| `/admin` | User management, system status, logs | Admin only |
 
 ---
 
-## 🏆 Interview Talking Points
+## Future Improvements
 
-This project demonstrates:
-
-- ✅ **REST API Design** - Proper endpoints, status codes, versioning
-- ✅ **Authentication** - JWT, bcrypt, token management
-- ✅ **Security** - Input validation, helmet, rate limiting
-- ✅ **Database** - MongoDB schema design, relationships
-- ✅ **Frontend Integration** - React, API consumption, error handling
-- ✅ **Code Organization** - Modular, scalable structure
-- ✅ **Best Practices** - Error handling, documentation
+1. Microservices architecture (auth-service, product-service)
+2. Docker containerization with docker-compose
+3. CI/CD pipeline with GitHub Actions
+4. Real-time notifications with WebSocket
+5. File upload for product images
+6. Email verification and password reset
+7. Analytics dashboard with charts
+8. i18n support for multi-language
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 
 ---
 
-## 👨‍💻 Author
+## Author
 
-Created as part of backend developer internship assignment demonstrating full-stack capabilities with focus on secure API design.
+Built as part of a backend developer internship assignment, demonstrating full-stack development with secure API design, production-grade UI, and scalable architecture.
